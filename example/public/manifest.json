@@ -1,0 +1,8 @@
+{
+  "short_name": "react-web-share-api-polyfill",
+  "name": "react-web-share-api-polyfill",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
