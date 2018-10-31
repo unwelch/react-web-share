@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+import Fallback from './fallback.js'
+
 const noop = () => {}
 
 class WebShare extends Component {
@@ -9,6 +11,7 @@ class WebShare extends Component {
     title: PropTypes.string,
     text: PropTypes.string,
     onShareSuccess: PropTypes.func,
+    onShare: PropTypes.func,
     onShareFail: PropTypes.func,
     children: PropTypes.node,
     // TODO: Custom prop validation after camelcase
@@ -22,6 +25,7 @@ class WebShare extends Component {
     title: document.title,
     text: '',
     onShareSuccess: noop,
+    onShare: noop,
     onShareFail: noop
   }
 
@@ -30,7 +34,16 @@ class WebShare extends Component {
   }
 
   clickHandler = event => {
-    const { url, title, text, onShareSuccess, onShareFail } = this.props
+    const {
+      url,
+      title,
+      text,
+      onShare,
+      onShareSuccess,
+      onShareFail
+    } = this.props
+
+    onShare()
     if (this.isWebShareAPISupported) {
       window.navigator
         .share({
