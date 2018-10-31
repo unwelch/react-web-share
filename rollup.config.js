@@ -1,8 +1,8 @@
 import babel from 'rollup-plugin-babel'
 import commonjs from 'rollup-plugin-commonjs'
 import external from 'rollup-plugin-peer-deps-external'
-import postcss from 'rollup-plugin-postcss'
 import resolve from 'rollup-plugin-node-resolve'
+import serve from 'rollup-plugin-serve'
 import url from 'rollup-plugin-url'
 import svgr from '@svgr/rollup'
 
@@ -17,23 +17,31 @@ export default {
       sourcemap: true
     },
     {
+      file: 'dist/bundle.js',
+      format: 'amd',
+      name: 'ReactWebShareAPI',
+      sourcemap: true
+    },
+    {
       file: pkg.module,
       format: 'es',
       sourcemap: true
     }
   ],
+  globals: { 'styled-components': 'styled' },
+  external: ['styled-components'],
   plugins: [
-    external(),
-    postcss({
-      modules: true
+    serve({
+      open: true,
+      contentBase: ['dist', 'demo']
     }),
+    external(),
     url(),
     svgr(),
     babel({
-      exclude: 'node_modules/**',
-      plugins: [ 'external-helpers' ]
+      exclude: 'node_modules/**'
     }),
-    resolve(),
+    resolve({ browser: true }),
     commonjs()
   ]
 }
