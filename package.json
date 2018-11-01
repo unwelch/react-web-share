@@ -23,7 +23,7 @@
     "copy-text-to-clipboard": "^1.0.4",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
-    "react-icons": "^3.2.2",
+    "react-icons": "2",
     "react-scripts": "2.1.0",
     "styled-components": "^4.0.3"
   },
@@ -42,9 +42,6 @@
   "files": [
     "dist"
   ],
-  "eslintConfig": {
-    "extends": "react-app"
-  },
   "browserslist": [
     ">0.2%",
     "not dead",

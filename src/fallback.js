@@ -1,24 +1,23 @@
 import React, { Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
-import ClickOutside from './lib/click-outside.js'
-// import FacebookIcon from 'react-icons/lib/fa/facebook-square'
-// import WhatsAppIcon from 'react-icons/lib/fa/whatsapp'
-// import TelegramIcon from 'react-icons/lib/fa/telegram-plane'
-// import EmailIcon from 'react-icons/lib/fa/envelope'
-// import SmsIcon from 'react-icons/lib/fa/comment-alt'
-// import CopyIcon from 'react-icons/lib/fa/copy'
 import copy from 'copy-text-to-clipboard'
+
+import FacebookIcon from 'react-icons/lib/fa/facebook-square'
+import WhatsAppIcon from 'react-icons/lib/fa/whatsapp'
+// import TelegramIcon from 'react-icons/lib/fa/telegram'
+import EmailIcon from 'react-icons/lib/fa/envelope'
+import SmsIcon from 'react-icons/lib/fa/comment'
+import CopyIcon from 'react-icons/lib/fa/copy'
 
 const Overlay = styled.div`
   position: fixed;
-  top: 0px;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.35);
   transition: background-color .4s;
-  padding: 8px;
   flex-direction: column;
   justify-content: flex-end;
   z-index: 100000;
@@ -37,21 +36,29 @@ const Modal = styled.div`
   transition: transform .4s,opacity .4s;
 `
 
-const Title = styled.div`
+const SystemFont = css`
   font-family: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-weight: 400;
-  font-size: 14px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 `
 
+const Title = styled.div`
+  ${SystemFont}
+  font-size: 18px;
+
+  margin-bottom: 10px;
+`
+
+const PlatformName = styled.div`
+  ${SystemFont}
+  font-size: 13px;
+  margin-top: 6px;
+`
+
 const ButtonStyles = css`
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  padding: 12px;
-  margin: 16px 8px;
+  border: none;
   cursor: pointer;
   color: #000;
   background-color: #fff;
@@ -60,6 +67,15 @@ const ButtonStyles = css`
 const Link = styled.a`
   ${ButtonStyles}
   text-decoration: none;
+
+  margin: 8px;
+  ${''}
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
 `
 
 const Button = styled.button`${ButtonStyles}`
@@ -78,9 +94,12 @@ const ModalBody = styled.div`
 // ${'' /* box-shadow: rgba(0, 0, 0, .5) 0 2px 4px; */}
 
 const ModalFooter = styled.div`
-  color: #0076ff;
-  font-size: 16px;
+  ${SystemFont}
+
+  color: #0076FF;
+  font-size: 20px;
   text-align: center;
+  user-select: none;
   cursor: pointer;
 
   max-width: 500px;
@@ -90,51 +109,71 @@ const ModalFooter = styled.div`
   background: #f8f8f8;
   border-radius: 8px;
   padding: 16px 23px;
-  text-align: left;
-  color: #000;
+  text-align: center;
 `
 // box-shadow: rgba(0, 0, 0, .5) 0 2px 4px;
 
-const createPlatformData = (name, title, text) => {
+const IconWrapper = styled.div`
+  width: 60px;
+  height: 50px;
+
+  & > svg {
+    width: 100%;
+    height: 100%;
+  }
+`
+
+const createPlatformData = (platform, title, text) => {
   const platformMap = {
     whatsapp: {
       dataAction: 'share/whatsapp/share',
-      href: `whatsapp://send?text=${text}`
-      // Icon: WhatsAppIcon
+      href: `whatsapp://send?text=${text}`,
+      Icon: WhatsAppIcon,
+      name: 'WhatsApp'
     },
     facebook: {
-      href: `fb-messenger://share/?message=${text}`
-      // Icon: FacebookIcon
+      href: `fb-messenger://share/?message=${text}`,
+      Icon: FacebookIcon,
+      name: 'Facebook'
     },
     telegram: {
-      href: `href="tg://msg?text=${text}`
-      // Icon: TelegramIcon
+      href: `href="tg://msg?text=${text}`,
+      Icon: FacebookIcon,
+      name: 'Telegram'
     },
     email: {
-      href: `mailto:?subject=${title}&body=${text}`
-      // Icon: EmailIcon
+      href: `mailto:?subject=${title}&body=${text}`,
+      Icon: EmailIcon,
+      name: 'Email'
     },
     sms: {
-      href: `sms:?body=${text}`
-      // Icon: SmsIcon
+      href: `sms:?body=${text}`,
+      Icon: SmsIcon,
+      name: 'SMS'
     }
   }
 
-  return platformMap[name]
+  return platformMap[platform]
 }
 
-const Platform = ({ name, title, text }) => {
-  const { href, dataAction, Icon } = createPlatformData(name, title, text)
+const Platform = ({ platform, title, text }) => {
+  const { href, dataAction, Icon, name } = createPlatformData(
+    platform,
+    title,
+    text
+  )
   return (
     <Link
       href={href && href}
       target='_blank'
       data-action={dataAction && dataAction}
     >
-      {/* <Icon /> */}
-      <Title>
-        {title}
-      </Title>
+      <IconWrapper>
+        <Icon />
+      </IconWrapper>
+      <PlatformName>
+        {name}
+      </PlatformName>
     </Link>
   )
 }
@@ -145,16 +184,33 @@ Platform.propTypes = {
   text: PropTypes.string
 }
 
+const Platforms = styled.div`
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+
+  & > *:last-child {
+    margin-right: 0;
+  }
+
+  & > *:first-child {
+    margin-left: 0;
+  }
+`
+
 const Copy = ({ text, url }) => (
   <Button
     onClick={() => {
       copy(text + ' ' + url)
     }}
   >
-    {/* <CopyIcon /> */}
-    <Title>
+    <IconWrapper>
+      <CopyIcon />
+
+    </IconWrapper>
+    <PlatformName>
       Copy
-    </Title>
+    </PlatformName>
   </Button>
 )
 
@@ -179,8 +235,6 @@ class Fallback extends Component {
   }
 
   componentDidMount () {
-    // TODO: Do it with React Portal
-    // https://reactjs.org/docs/portals.html
     document.body.appendChild(this.el)
   }
 
@@ -193,18 +247,6 @@ class Fallback extends Component {
     this.handleClose(event, () => {
       onShareFail()
     })
-  }
-
-  handlePlatformClick = event => {
-    const { onShare } = this.props
-    // this.setState(
-    //   {
-    //     isOpen: true
-    //   },
-    //   () => {
-    //     onShare()
-    //   }
-    // )
   }
 
   handleClose = (event, cb) => {
@@ -243,16 +285,18 @@ class Fallback extends Component {
                 <Title>
                   Share via
                 </Title>
-                {platforms.map((platform, index) => {
-                  return (
-                    <Platform
-                      key={index}
-                      name={platform}
-                      onClick={this.handlePlatformClick}
-                    />
-                  )
-                })}
-                <Copy />
+                <Platforms>
+                  {platforms.map((platform, index) => {
+                    return (
+                      <Platform
+                        key={index}
+                        platform={platform}
+                        onClick={this.props.onShare}
+                      />
+                    )
+                  })}
+                  <Copy />
+                </Platforms>
               </ModalBody>
               <ModalFooter onClick={this.handleFooterClick}>
                 Cancel

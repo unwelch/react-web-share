@@ -4,8 +4,13 @@ import WebShare from './web-share.js'
 import styled, { createGlobalStyle } from 'styled-components'
 
 const Button = styled.button`
-
+  font-size: 50px;
+  border-radius: 25px;
+  padding: 16px 40px;
+  outline: none;
+  cursor: pointer;
 `
+
 const NoramlizeStyles = createGlobalStyle`
   html, body, #root {
     margin: 0;
